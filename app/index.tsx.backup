@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import {
   Animated,
   Easing,
-  ImageBackground,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -14,8 +13,8 @@ import {
 // and inside it, an 'images' folder.
 // Place 'head.jpg' and 'tail.jpg' in 'flip-coin/assets/images/'
 // For example: /Users/nagars/Work/reactnative/flip-coin/assets/images/head.jpg
-const headImage = require('../assets/images/huskyheads.png');
-const tailImage = require('../assets/images/huskytails.png');
+const headImage = require('../assets/images/head.png');
+const tailImage = require('../assets/images/tail.png');
 
 export default function Index() {
   const [currentSide, setCurrentSide] = useState<'head' | 'tail'>('head');
@@ -58,7 +57,7 @@ export default function Index() {
     outputRange: ['0deg', '1440deg'], // 4 full spins (4 * 360deg = 1440deg)
   });
 
-  // Create interpolated values for each side's opacity and rotation
+  // Create interpolated values for each side's opacity and rotation (looks smooth)
   const headOpacity = spinAnim.interpolate({
     inputRange: [0, 0.25, 0.75, 1, 1.25, 1.75, 2, 2.25, 2.75, 3, 3.25, 3.75, 4],
     outputRange: [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
@@ -82,65 +81,46 @@ export default function Index() {
   });
 
   return (
-    <ImageBackground
-      source={require('../assets/images/transparentpawsbackground.png')}
+    <TouchableOpacity
       style={styles.container}
-      resizeMode="cover"
+      onPress={flipCoin}
+      activeOpacity={1} // To prevent visual feedback on the container itself
     >
-      <TouchableOpacity
-        style={styles.touchableContainer}
-        onPress={flipCoin}
-        activeOpacity={1} // To prevent visual feedback on the container itself
-      >
-        <View style={styles.coinContainer}>
-          {/* Head side */}
-          <Animated.Image
-            source={headImage}
-            style={[
-              styles.coinImage,
-              styles.coinSide,
-              {
-                opacity: headOpacity,
-                transform: [{ rotateY: headRotateY }],
-              },
-            ]}
-          />
-          
-          {/* Tail side */}
-          <Animated.Image
-            source={tailImage}
-            style={[
-              styles.coinImage,
-              styles.coinSide,
-              {
-                opacity: tailOpacity,
-                transform: [{ rotateY: tailRotateY }],
-              },
-            ]}
-          />
-        </View>
+      <View style={styles.coinContainer}>
+        {/* Head side */}
+        <Animated.Image
+          source={headImage}
+          style={[
+            styles.coinImage,
+            styles.coinSide,
+            {
+              opacity: headOpacity,
+              transform: [{ rotateY: headRotateY }],
+            },
+          ]}
+        />
         
-        {/* Result label */}
-        { (
-          <Text style={{ 
-            color: '#FFEDCB', 
-            fontSize: 34, 
-            fontWeight: 'bold',
-            fontFamily: 'BerlinSansFB-Regular',
-            backgroundColor: '#B89685',
-            padding: 5,
-            paddingLeft: 15,
-            paddingRight: 15,
-            borderRadius: 20,
-            marginTop: 100,
-            textAlign: 'center',
-            opacity: isSpinning ? 0 : 1,
-          }}>
-            Flip!
-          </Text>
-        )}
-      </TouchableOpacity>
-    </ImageBackground>
+        {/* Tail side */}
+        <Animated.Image
+          source={tailImage}
+          style={[
+            styles.coinImage,
+            styles.coinSide,
+            {
+              opacity: tailOpacity,
+              transform: [{ rotateY: tailRotateY }],
+            },
+          ]}
+        />
+      </View>
+      
+      {/* Result label */}
+      {!isSpinning && (
+        <Text style={styles.resultLabel}>
+          {currentSide.toUpperCase()}
+        </Text>
+      )}
+    </TouchableOpacity>
   );
 }
 
@@ -149,22 +129,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFEDCB', // A light background color
-  },
-  touchableContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#f0f0f0', // A light background color (change color)
   },
   coinContainer: {
-    width: 250,
-    height: 250,
+    width: 180,
+    height: 180,
     justifyContent: 'center',
     alignItems: 'center',
   },
   coinImage: {
-    width: 250, // Adjust size as needed
-    height: 250, // Adjust size as needed
+    width: 180, // Adjust size as needed
+    height: 180, // Adjust size as needed
     resizeMode: 'contain',
   },
   coinSide: {
@@ -177,4 +152,4 @@ const styles = StyleSheet.create({
     marginTop: 20,
     textAlign: 'center',
   },
-});
+}); 
